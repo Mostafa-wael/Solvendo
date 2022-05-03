@@ -23,11 +23,11 @@ class motorContoller
         int IN2;
         motorContoller(int _ENCA, int _ENCB ,int _PWM_PIN,int _IN1,int _IN2)
         {
-            int ENCA = _ENCA;
-            int ENCB = _ENCB;
-            int PWM_PIN = _PWM_PIN;
-            int IN1 = _IN1;
-            int IN2 = _IN2;
+            ENCA = _ENCA;
+            ENCB = _ENCB;
+            PWM_PIN = _PWM_PIN;
+            IN1 = _IN1;
+            IN2 = _IN2;
             setupMotor();
         }
         void move(float vTarget, int count_i)
@@ -42,7 +42,7 @@ class motorContoller
         float vPrev = 0;
         float eIntegral = 0;
         float ePrev = 0;
-        float vTarget_M1 = 10;
+        //float vTarget_M1 = 10;
         // Use the "volatile" directive for variables used in an interrupt
         volatile long prevT_i = 0;
         void setupMotor()
@@ -145,7 +145,7 @@ void setup() {
     attachInterrupt(digitalPinToInterrupt(ENCA_M1), doEncoderA, CHANGE);
     pinMode(ENCB_M1, INPUT_PULLUP);
     attachInterrupt(digitalPinToInterrupt(ENCB_M1), doEncoderB, CHANGE);
-    vTarget = 10;
+    vTarget = 10.0;
     Serial.begin(115200);
   
 }
@@ -165,5 +165,3 @@ void doEncoderB()
 {  
     count_i += (digitalRead(ENCA_M1)==digitalRead(ENCB_M1))?-1:1;
 }
-
-
