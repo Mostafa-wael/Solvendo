@@ -100,10 +100,18 @@ bool LSRB_SolveMaze(){
 }
 
 void SetupIRs(){
-  
+  //Setup IR sensors Pins
+  //TODO: complete this function
+}
+
+void SetupLSRB_Outputs(){
+  //Setup LSRB outputs Pins
+  //TODO: complete this function
+
 }
 void setup(){
   SetupIRs();
+  SetupLSRB_Outputs();
 }
 void loop(){
   bool solved = LSRB_SolveMaze();
