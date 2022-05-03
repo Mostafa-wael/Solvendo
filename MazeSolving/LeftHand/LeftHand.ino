@@ -64,6 +64,7 @@ bool IsEnd(bool Left , bool Straight , bool Right){
       return false;
     }
   }
+   return false;
 }
 
 bool LSRB_SolveMaze(){
