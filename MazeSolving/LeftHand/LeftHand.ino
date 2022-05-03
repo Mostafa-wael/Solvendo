@@ -49,7 +49,7 @@ bool IsEnd(bool Left , bool Straight , bool Right){
   if ((Left) && (Straight) && (Right)){
     // all pathes are allowed so it can be the end of the the maze
     GoStraight();
-    // should be delay here
+    //TODO: Add delay here
     Stop();
 
     Left = LeftSensor();
