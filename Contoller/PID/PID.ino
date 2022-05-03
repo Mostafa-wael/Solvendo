@@ -1,112 +1,169 @@
 // Constants
-#define COUNT_TO_RPM 60/600.0
-#define kp 5
-#define ki 10
+#define kp 15
+#define ki 100
+#define kd 1e-2
+#define REDUCTION_FACTOR 10.0
+#define COUNT_TO_RPM 60/9053.328
+#define VERBOSE 1
+
 // Pins
-#define ENCA 2 // Encoder A
-#define ENCB 3 // Encoder B 
-#define PWM 5 // PWM
-#define IN1 6  // Motor Direction forward
-#define IN2 7 // Motor Direction backward
+#define ENCA_M1 2
+#define ENCB_M1 3
+#define PWM_PIN_M1 9
+#define IN1_M1 5
+#define IN2_M1 6
 
-// globals
-long prevT = 0;
-int countPrev = 0;
-float vFilt = 0;
-float vPrev = 0;
-float eintegral = 0;
+class motorContoller
+{
+    public:
+        int ENCA;
+        int ENCB;
+        int PWM_PIN;
+        int IN1;
+        int IN2;
+        motorContoller(int _ENCA, int _ENCB ,int _PWM_PIN,int _IN1,int _IN2)
+        {
+            int ENCA = _ENCA;
+            int ENCB = _ENCB;
+            int PWM_PIN = _PWM_PIN;
+            int IN1 = _IN1;
+            int IN2 = _IN2;
+            setupMotor();
+        }
+        void move(float vTarget, int count_i)
+        {
+            moveMotor(calcPID(vTarget, count_i),PWM_PIN,IN1,IN2);
+        }
+    private:
+        // globals
+        long prevT = 0;
+        int countPrev = 0;
+        float vFilt = 0;
+        float vPrev = 0;
+        float eIntegral = 0;
+        float ePrev = 0;
+        float vTarget_M1 = 10;
+        // Use the "volatile" directive for variables used in an interrupt
+        volatile long prevT_i = 0;
+        void setupMotor()
+        {
+            pinMode(PWM_PIN,OUTPUT);
+            pinMode(IN1,OUTPUT);
+            pinMode(IN2,OUTPUT);
+        }
+        int readCount(int count_i)
+        {
+            int count = 0;
+            noInterrupts(); // disable interrupts temporarily while reading
+            count = count_i;
+            interrupts(); // turn interrupts back on
+            return count;
+        }
+        float calcPID(float vTarget_M1, int count_i)
+        {
+            int count = readCount(count_i);
+            // Compute velocity
+            long currT = micros();
+            float deltaT = ((float) (currT-prevT))/1.0e6;
+            float velocity = (count - countPrev)/deltaT;
+            countPrev = count;
+            prevT = currT;
 
-// Use the "volatile" directive for variables used in an interrupt
+            // Convert count/s to RPM
+            float vTemp = velocity*COUNT_TO_RPM;
+            // Low-pass filter (25 Hz cutoff)
+            vFilt = 0.854*vFilt + 0.0728*vTemp + 0.0728*vPrev;
+            float vCurrent = vFilt;
+            vPrev = vTemp;
+            
+            // Compute the control signal c
+            float eCuurent = vTarget_M1-vCurrent;
+            float eDriv = (eCuurent-ePrev)/deltaT;
+            eIntegral += eCuurent*deltaT;
+            ePrev = eCuurent;
+            float c = kp*eCuurent + ki*eIntegral + kd*eDriv;
+            c = fabs(c) < 255? c: c/REDUCTION_FACTOR ;
+
+            // print values
+            #ifdef VERBOSE
+            printValues(vCurrent, vTarget_M1, c, eCuurent, eIntegral, eDriv);
+            #endif
+            
+            return c;
+        }
+        void moveMotor(float c, int pinPWM, int dirForward, int dirBackward)
+        {
+            // Set the motor speed and direction
+            int dir = c<0? -1: 1;
+            int pwr = (int) fabs(c);
+            pwr = pwr > 255? 255:pwr;
+            setMotor(dir,pwr,pinPWM,dirForward,dirBackward);
+        }
+        void printValues(float vCurrent, float vTarget_M1, float c, float eCuurent, float eIntegral, float eDriv)
+        {
+            Serial.print(vCurrent);
+            Serial.print(" ");
+            Serial.print(vTarget_M1);
+            Serial.print(" ");
+            Serial.print(c);
+            Serial.print(" ");
+            Serial.print(eCuurent);
+            Serial.print(" ");
+            Serial.print(eIntegral);
+            Serial.print(" ");
+            Serial.print(eDriv);
+            Serial.println();
+        }
+        void setMotor(int dir, int pwmVal, int pwm, int in1, int in2)
+        {
+            analogWrite(pwm,pwmVal); // Motor speed
+            if(dir == 1){ 
+                // Turn one way
+                digitalWrite(in1,HIGH);
+                digitalWrite(in2,LOW);
+            }
+            else if(dir == -1){
+                // Turn the other way
+                digitalWrite(in1,LOW);
+                digitalWrite(in2,HIGH);
+            }
+            else{
+                // Or dont turn
+                digitalWrite(in1,LOW);
+                digitalWrite(in2,LOW);    
+            }
+        }
+};
+
+
+
+float  vTarget = 0;
 volatile int count_i = 0;
-volatile float velocity_i = 0;
-volatile long prevT_i = 0;
-
-
+motorContoller M1 (ENCA_M1,ENCB_M1 ,PWM_PIN_M1,IN1_M1,IN2_M1);
 void setup() {
-  Serial.begin(115200); // Start serial communication
-
-  // Set pins as input and output
-  pinMode(ENCA,INPUT);
-  pinMode(ENCB,INPUT);
-  pinMode(PWM,OUTPUT);
-  pinMode(IN1,OUTPUT);
-  pinMode(IN2,OUTPUT);
-
-  // attach interrupt to encoder pins
-  attachInterrupt(digitalPinToInterrupt(ENCA),
-                  readEncoder,RISING);
-}
-
-void loop() {
-
-  // read the count and velocity
-  int count = 0;
-  noInterrupts(); // disable interrupts temporarily while reading
-  count = count_i;
-  interrupts(); // turn interrupts back on
-
-  // Compute velocity 
-  long currT = micros();
-  float deltaT = ((float) (currT-prevT))/1.0e6;
-  float velocity = (count - countPrev)/deltaT;
-  countPrev = count;
-  prevT = currT;
-
-  // Convert count/s to RPM
-  float v = velocity * COUNT_TO_RPM;
-
-  // Low-pass filter (25 Hz cutoff)
-  vFilt = 0.854*vFilt + 0.0728*v + 0.0728*vPrev;
-  vPrev = v;
-
-  // Set a target velocity
-  float vt = 100*(sin(currT/1e6)>0); // step sine wave
-
-  // Compute the control signal u
-  float e = vt-vFilt;
-  eintegral += e*deltaT;
+    pinMode(ENCA_M1, INPUT_PULLUP);
+    attachInterrupt(digitalPinToInterrupt(ENCA_M1), doEncoderA, CHANGE);
+    pinMode(ENCB_M1, INPUT_PULLUP);
+    attachInterrupt(digitalPinToInterrupt(ENCB_M1), doEncoderB, CHANGE);
+    vTarget = 10;
+    Serial.begin(115200);
   
-  float u = kp*e + ki*eintegral;
+}
+void loop() {
+  // Set a target velocity
+  while(Serial.available()>0)
+    vTarget =  Serial.parseInt();
+    M1.move(vTarget,count_i);
+  // moveMotor(calcPID(vTarget_M1),PWM_PIN_M1,IN1_M1,IN2_M1);
 
-  // Set the motor speed and direction
-  int dir = u<0 ?-1:1;
- 
-  int pwr = (int) fabs(u);
-  pwr = pwr > 255 ? 255 : pwr;
-  setMotor(dir,pwr,PWM,IN1,IN2);
-
-  // Print the data
-  Serial.print(vt);
-  Serial.print(" ");
-  Serial.print(v);
-  Serial.println();
-  delay(1); // sampling rate
+}
+void doEncoderA()
+{  
+    count_i += (digitalRead(ENCA_M1)==digitalRead(ENCB_M1))?1:-1;
+}
+void doEncoderB()
+{  
+    count_i += (digitalRead(ENCA_M1)==digitalRead(ENCB_M1))?-1:1;
 }
 
-void setMotor(int dir, int pwmVal, int pwm, int in1, int in2){
-  analogWrite(pwm,pwmVal); // Motor speed
-  if(dir == 1){ 
-    // Turn one way
-    digitalWrite(in1,HIGH);
-    digitalWrite(in2,LOW);
-  }
-  else if(dir == -1){
-    // Turn the other way
-    digitalWrite(in1,LOW);
-    digitalWrite(in2,HIGH);
-  }
-  else{
-    // Or dont turn
-    digitalWrite(in1,LOW);
-    digitalWrite(in2,LOW);    
-  }
-}
 
-void readEncoder(){
-  // Read encoder B when ENCA rises
-  int b = digitalRead(ENCB);
-  // If B is high, increment forward
-  // Otherwise, increment backward
-  int increment = b>0? 1:-1;
-  count_i += increment;
-}
