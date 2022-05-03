@@ -18,9 +18,10 @@ int posPrev = 0;
 volatile int pos_i = 0;
 volatile long prevT_i = 0;
 
-float v1Filt = 0;
+float vFilt = 0;
 float v1Prev = 0;
-float eintegral = 0;
+float eIntegral = 0;
+float ePrev = 0;
 
 void setup() {
   Serial.begin(115200);
@@ -59,39 +60,53 @@ void loop() {
   // Convert count/s to RPM
   float v1 = velocity1/9053.328*60.0;
   // Low-pass filter (25 Hz cutoff)
-  v1Filt = 0.854*v1Filt + 0.0728*v1 + 0.0728*v1Prev;
+  vFilt = 0.854*vFilt + 0.0728*v1 + 0.0728*v1Prev;
+  float vCurrent = vFilt;
   v1Prev = v1;
 
 
   // Set a target
-  float vt = 20*(sin(currT/1e6)>0);
+  float vTarget = 20*(sin(currT/2e5)>0);
 
   // Compute the control signal u
-  float kp = 10;
-  float ki = 10;
-  float e = vt-v1Filt;
-  eintegral = eintegral + e*deltaT;
-  
-  float u = kp*e + ki*eintegral;
+  float kp = 25;
+  float ki = 100;
+  float kd = 1e-3;
+  float eCuurent = vTarget-vCurrent;
+  float eDriv = (eCuurent-ePrev)/deltaT;
+  eIntegral += eCuurent*deltaT;
+  eIntegral = (int) fabs(vCurrent) < 2? 0: eIntegral;
+  float c = kp*eCuurent + ki*eIntegral + kd*eDriv;
+
+  ePrev = eCuurent;
 
   // Set the motor speed and direction
   int dir = 1;
-  if (u<0){
+  if (c<0){
     dir = -1;
   }
-  int pwr = (int) fabs(u);
-  if(pwr > 255){
-    pwr = 255;
-  }
+  int pwr = (int) fabs(c);
+  pwr = pwr > 255? 255:pwr;
+ 
+
   setMotor(dir,pwr,PWM,IN1,IN2);
 
   
-  Serial.print(v1Filt);
+  Serial.print(vCurrent);
   Serial.print(" ");
-  Serial.print(vt);
+  Serial.print(vTarget);
+  Serial.print(" ");
+  Serial.print(c);
+  Serial.print(" ");
+  Serial.print(pwr);
+  Serial.print(" ");
+  Serial.print(eCuurent);
+  Serial.print(" ");
+  Serial.print(eIntegral);
+  Serial.print(" ");
+  Serial.print(eDriv);
   Serial.println();
   delay(1);
-  //Serial.print(digitalRead(ENCA));
 }
 
 void setMotor(int dir, int pwmVal, int pwm, int in1, int in2){
@@ -121,27 +136,4 @@ void doEncoderB()
 {  
   pos_i += (digitalRead(ENCA)==digitalRead(ENCB))?-1:1;
 }
-/*
-void readEncoder(){
-  // Read encoder B when ENCA rises
-  int b = digitalRead(ENCB);
-  int increment = 0;
-  if(b>0){
-    // If B is high, increment forward
-    increment = 1;
-  }
-  else{
-    // Otherwise, increment backward
-    increment = -1;
-  }
-  pos_i = pos_i + increment;
-  // Compute velocity with method 2
-  long currT = micros();
-  float deltaT = ((float) (currT - prevT_i))/1.0e6;
-  velocity_i = increment/deltaT;
-  prevT_i = currT;
-  
-  Serial.print("Count");
-  Serial.println(pos_i);
-}
-*/
+
