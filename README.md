@@ -14,3 +14,5 @@
 2. It will mount as a Mass Storage Device called RPI-RP2.
 3. Upload your code.
 4. Yaaaaay, it works!
+## Tinkercad
+[simulation](https://www.tinkercad.com/things/89QFwLJdkST-copy-of-dc-motor-encoder/editel?sharecode=EBc5tpiEqHwpdsLtZj1UwLKmW3mZCqME-YdnmQar_FM)
