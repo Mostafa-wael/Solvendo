@@ -69,13 +69,12 @@ void loop() {
   float vTarget = 20*(sin(currT/2e5)>0);
 
   // Compute the control signal u
-  float kp = 25;
+  float kp = 15;
   float ki = 100;
-  float kd = 1e-3;
+  float kd = 1e-2;
   float eCuurent = vTarget-vCurrent;
   float eDriv = (eCuurent-ePrev)/deltaT;
   eIntegral += eCuurent*deltaT;
-  eIntegral = (int) fabs(vCurrent) < 2? 0: eIntegral;
   float c = kp*eCuurent + ki*eIntegral + kd*eDriv;
 
   ePrev = eCuurent;
