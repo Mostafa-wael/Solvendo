@@ -58,19 +58,16 @@ void loop() {
 
   // Convert count/s to RPM
   float v1 = velocity1/9053.328*60.0;
-  float v2 = velocity2/9053.328*60.0;
-
   // Low-pass filter (25 Hz cutoff)
   v1Filt = 0.854*v1Filt + 0.0728*v1 + 0.0728*v1Prev;
   v1Prev = v1;
-  v2Filt = 0.854*v2Filt + 0.0728*v2 + 0.0728*v2Prev;
-  v2Prev = v2;
+
 
   // Set a target
-  float vt = 100*(sin(currT/1e6)>0);
+  float vt = 20*(sin(currT/1e6)>0);
 
   // Compute the control signal u
-  float kp = 5;
+  float kp = 10;
   float ki = 10;
   float e = vt-v1Filt;
   eintegral = eintegral + e*deltaT;
@@ -88,12 +85,13 @@ void loop() {
   }
   setMotor(dir,pwr,PWM,IN1,IN2);
 
-  Serial.print(vt);
-  Serial.print(" ");
+  
   Serial.print(v1Filt);
+  Serial.print(" ");
+  Serial.print(vt);
   Serial.println();
-  delay(1000);
-  Serial.print(digitalRead(ENCA));
+  delay(1);
+  //Serial.print(digitalRead(ENCA));
 }
 
 void setMotor(int dir, int pwmVal, int pwm, int in1, int in2){
@@ -137,7 +135,6 @@ void readEncoder(){
     increment = -1;
   }
   pos_i = pos_i + increment;
-
   // Compute velocity with method 2
   long currT = micros();
   float deltaT = ((float) (currT - prevT_i))/1.0e6;
