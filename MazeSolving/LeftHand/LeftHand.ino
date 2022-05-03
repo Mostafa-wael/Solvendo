@@ -96,7 +96,7 @@ bool LSRB_SolveMaze(){
     //No pathes are allowed
     UTurn();
   }
-
+  return false;
 }
 
 void SetupIRs(){
