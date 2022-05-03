@@ -108,6 +108,5 @@ void readEncoder(){
   // If B is high, increment forward
   // Otherwise, increment backward
   int increment = b>0? 1:-1;
-  count_i = count_i + increment;
-
+  count_i += increment;
 }
