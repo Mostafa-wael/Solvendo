@@ -70,11 +70,11 @@ class motorContoller
             prevT = currT;
 
             // Convert count/s to RPM
-            float vTemp = velocity*COUNT_TO_RPM;
+            float vCurrent = velocity*COUNT_TO_RPM;
             // Low-pass filter (25 Hz cutoff)
-            vFilt = 0.854*vFilt + 0.0728*vTemp + 0.0728*vPrev;
-            float vCurrent = vFilt;
-            vPrev = vTemp;
+            vFilt = 0.854*vFilt + 0.0728*(vCurrent + vPrev);
+            vCurrent = vFilt;
+            vPrev = vCurrent;
             
             // Compute the control signal c
             float eCuurent = vTarget_M1-vCurrent;
