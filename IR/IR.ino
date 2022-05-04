@@ -14,8 +14,6 @@ VCC             VCC
  |               |
 Gnd             Gnd
 */
-*/
-*/
 int a,b, c1, c2;
 void setup() 
 {
