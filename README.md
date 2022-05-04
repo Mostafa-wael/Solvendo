@@ -16,3 +16,5 @@
 4. Yaaaaay, it works!
 ## Tinkercad
 [simulation](https://www.tinkercad.com/things/89QFwLJdkST-copy-of-dc-motor-encoder/editel?sharecode=EBc5tpiEqHwpdsLtZj1UwLKmW3mZCqME-YdnmQar_FM)
+## IR 
+[link](https://www.utmel.com/components/tcrt5000-ir-sensor-datasheet-pinout-and-circuit?id=697)
