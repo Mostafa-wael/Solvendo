@@ -1,0 +1,19 @@
+# build directories
+cmake-build-*/
+errors/
+build/
+out/
+bin/
+
+# Visual Studio specific files
+CMakeSettings.json
+.vs/
+
+# Clion specific files
+.idea/
+
+# Visual Studio Code specific files
+.vscode/
+
+# Screenshots
+screenshots/
