@@ -17,7 +17,7 @@
 #define ThresholdDiff_W 150
 #define SPEED 80
 #define NUM_OF_ERROR 70
-#define SPEEDFORWARD 12
+#define SPEEDFORWARD 120
 
 
 void stopCar(){
