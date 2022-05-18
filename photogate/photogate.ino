@@ -1,25 +1,34 @@
+int Motor_bin = 5;
+int VCC_bin = 6;
 void setup()
 {
-int wheel = 0;
-int pass = 0;
-  wheel = 0; pass = 0;
- Serial.begin(9600);
+   pinMode(Motor_bin, OUTPUT);
+   pinMode(VCC_bin, OUTPUT);
+   int wheel = 0;
+   int pass = 0;
+   Serial.begin(9600);
 }
+
 float c = 0;
+int i =0;
 void loop() {
- digitalWrite(6, HIGH);
+//  if(i>255)
+//    i =0;
+// i+=5;
+ analogWrite(Motor_bin, 100);
+ digitalWrite(VCC_bin, HIGH);
  delayMicroseconds(250);
  int c1 = analogRead(A2);
- digitalWrite(6, LOW);
+ digitalWrite(VCC_bin, LOW);
  delayMicroseconds(250);
  c1 -= analogRead(A2);
 
- delay(5);
+// delay(5);
 
- digitalWrite(6, HIGH);
+ digitalWrite(VCC_bin, HIGH);
  delayMicroseconds(250);
  int c2 = analogRead(A2);
- digitalWrite(6, LOW);
+ digitalWrite(VCC_bin, LOW);
  delayMicroseconds(250);
  c2 -= analogRead(A2);
 
@@ -29,18 +38,18 @@ c = 0.854*c + 0.0728*(c2 + c1); // low pass filter 25 Hz
 //Serial.print(" ");
 //Serial.print(c2);
 //Serial.print(" ");
-//Serial.println(c);
+Serial.println(c);
 
- if (c > 280)
-   pass++;
- else
-   wheel++;
-Serial.print(pass);
-Serial.print(" ");
-Serial.println(wheel);
+// if (c > 360)
+//  Serial.println("pass");
+// else
+//   Serial.println("wheel");
+//Serial.print(pass);
+//Serial.print(" ");
+//Serial.println(wheel);
 }
 
-// int in1 = 16;
+
 
 // void setup() {
 //   // put your setup code here, to run once:
