@@ -19,6 +19,16 @@
 #define NUM_OF_ERROR 70
 #define SPEEDFORWARD 110
 
+#define kp 0.02
+#define ki 0.0000004 // 0.000001
+#define kd .015 //1.5
+
+#define PIDTHRESHOLD 4
+
+float eCurrent=0;
+float ePrev=0;
+long prevT = 0;
+float eIntegral = 0;
 
 void stopCar(){
   analogWrite(MOTOR_R_SPEED, LOW);
@@ -26,18 +36,20 @@ void stopCar(){
 //  Serial.println("Stop");
 }
 
-void moveCarLeft()
+void moveCarLeft(float delta_v)
 {
-  analogWrite(MOTOR_R_SPEED, SPEED);
+  analogWrite(MOTOR_R_SPEED, SPEED + delta_v);
   analogWrite(MOTOR_L_SPEED, LOW);
 //  Serial.println("Left");
+//  Serial.println(SPEED + delta_v);
 }
 
-void moveCarRight()
+void moveCarRight(float delta_v)
 {
   analogWrite(MOTOR_R_SPEED,LOW);
-  analogWrite(MOTOR_L_SPEED, SPEED);
+  analogWrite(MOTOR_L_SPEED, SPEED + delta_v);
 //  Serial.println("Right");
+//  Serial.println(SPEED + delta_v);
 }
 
 void moveForward(){
@@ -66,6 +78,25 @@ void moveBackward(){
   Serial.print(" ");
   Serial.println((analogRead(IR_R) - analogRead(IR_L)));
 }
+
+float differential_steering(float left_align,float c,float right_align) 
+{
+  long currT = micros();
+  float deltaT = ((float) (currT-prevT))/1.0e6;
+
+  eCurrent = 0 -(left_align-right_align); 
+  ePrev = (eCurrent-ePrev)/deltaT;
+  eIntegral += eCurrent*deltaT;
+
+//  float delta_v = kp*eCurrent+ki*eIntegral ;
+  float delta_v = kp*eCurrent + ki*eIntegral + kd*ePrev;
+
+  // upadating fro next round
+  ePrev = eCurrent;
+  prevT=currT;
+  return delta_v;
+}
+
  
 void setup() {
   // put your setup code here, to run once:
@@ -89,40 +120,42 @@ int error = 0;
 boolean dir = false;
 void loop() {
 // printRealValues();
- moveForward();
+ movecar();
 }
 
 void movecar(){
  float C = analogRead(IR_C);
  float L = analogRead(IR_L);
  float R = analogRead(IR_R);
-
-  if(C>THRESHOLD && abs(L-R)<ThresholdDiff_W)
+ float PIDError = differential_steering(L, C, R);
+ Serial.println("PIDError");
+ Serial.println(PIDError);
+ 
+  if(C>THRESHOLD && abs(PIDError) < PIDTHRESHOLD) //L-R < ThresholdDiff_W
   {
-    Serial.println("error");
     if(error == NUM_OF_ERROR)
       dir = !dir;
     if(!dir)
     {
-      moveCarLeft();
+      moveCarLeft(0.0);
       error ++;
     }
     else
     {
-      moveCarRight();
+      moveCarRight(0.0);
       error --;
     }
      
   }
   else{
-        if(L-R>ThresholdDiff)  //Left more in white than R 
+        if(PIDError < -PIDTHRESHOLD)  //Left more in white than R 
         {
-          moveCarRight();
+          moveCarRight(abs(PIDError));
           lastDir = RIGHT;
         }
-        else if(ThresholdDiff<R-L)  //Right more in white than L 
+        else if(PIDError > PIDTHRESHOLD)  //Right more in white than L 
         { 
-          moveCarLeft();
+          moveCarLeft(abs(PIDError));
           lastDir = LEFT;
         }
         else{ 
