@@ -8,6 +8,7 @@
 #define RIGHT 2
 #define STOP 3
 
+<<<<<<< HEAD
 
 #define MOTOR_L_F 2
 #define MOTOR_L_B 3
@@ -15,13 +16,22 @@
 #define MOTOR_R_B 5
 #define MOTOR_L_SPEED 10
 #define MOTOR_R_SPEED 9
+=======
+#define MOTOR_L_F 8
+#define MOTOR_L_B 9
+#define MOTOR_R_F 10
+#define MOTOR_R_B 11
+#define MOTOR_L_SPEED 5
+#define MOTOR_R_SPEED 6
+>>>>>>> a5935770c116985d06315cd3bbd943380baa8cfe
 
 
 #define THRESHOLD3 300
 #define THRESHOLD 500 // Salama changed this
 #define THRESHOLD2 50
-#define SPEED 70
 
+#define SPEED 75
+#define DELTA_SPEED 65
 
 
 
@@ -35,23 +45,30 @@ void moveCar(){
   Serial.print("S");
   analogWrite(MOTOR_R_SPEED, SPEED);
   analogWrite(MOTOR_L_SPEED, SPEED);
+
 }
 void stopCar(){
   Serial.print(" ");
   analogWrite(MOTOR_R_SPEED, LOW);
   analogWrite(MOTOR_L_SPEED, LOW);
+    Serial.println("Stop");
+
 }
 void moveCarLeft()
 {
   analogWrite(MOTOR_R_SPEED, SPEED);
-  analogWrite(MOTOR_L_SPEED, LOW);
+  analogWrite(MOTOR_L_SPEED, SPEED - DELTA_SPEED);
   Serial.print("L");
+    Serial.println("Left");
+
 }
 void moveCarRight()
 {
-  analogWrite(MOTOR_R_SPEED, LOW);
+  analogWrite(MOTOR_R_SPEED, SPEED - DELTA_SPEED);
   analogWrite(MOTOR_L_SPEED, SPEED);
   Serial.print("R");
+    Serial.println("Right");
+
 }
 void printRealValues()
 {
@@ -74,8 +91,10 @@ void setup() {
   digitalWrite(MOTOR_R_B, LOW);
   digitalWrite(MOTOR_L_B, LOW);
 }
+  #define SMAPLE 1000
 void loop() {
  printRealValues();
+
   int right = 0;  int center=0; int left =0 ;
   for(int i = 0; i< SMAPLE; i++){
        if(blackLine(IR_C))
@@ -93,8 +112,10 @@ void loop() {
   Serial.print("Right: "); Serial.println(right);
   Serial.print("Left: "); Serial.println(left);
   Serial.print("Center: "); Serial.println(center);
-   if (abs(left-right) < SMAPLE/2)
-    center += (left + right); 
+
+//   if (abs(left-right) < SMAPLE/2)
+//    center += (left + right); 
+
   if(center>right && center>left){
     moveCar();
     Serial.println(" Straight: ");
