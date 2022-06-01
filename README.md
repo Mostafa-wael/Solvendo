@@ -1,4 +1,4 @@
-# Solvendo
+# <h1 align="center">Solvendo</h1>
 ### An intelligent maze solving car 🧠🏎️
 
 Solvendo can solve a complex maze in the shortest amount of time while maintaining a decent velocity profile. It can accomplish this by utilising a combination of closed-loop controllers such as PID and a variety of conditions. It is able to tackle the line following problem using an array of infrared sensors and achieve the same results, That’s why it got its name **Solvendo** which means **solver in latin**.
