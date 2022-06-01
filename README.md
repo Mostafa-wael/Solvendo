@@ -22,6 +22,14 @@ Our Car consists of 5 IR sensors and 2 DC motors. In this schematic, we show the
 We have used the L293N motor driver, but since it is not supported in the simulation, we have shown the connections of the L293D H-bridge with a voltage regulator. 
 We have used the TCRT 5000 IR sensors, but since it is not supported in the simulation, we have used another module.
 
+## Body
+#### Design
+![image](https://user-images.githubusercontent.com/56788883/171510096-97784792-5c41-4698-8ae8-d633fbc45c80.png)
+![image](https://user-images.githubusercontent.com/56788883/171510265-c1c543d9-fc6b-44f2-9289-b67fdd7f553c.png)
+#### After Printing
+![image](https://user-images.githubusercontent.com/56788883/171510400-8cd16ee7-a4d2-4c00-b876-99614bdb7078.png)
+
+
 ## Challenges
 - **The Tight Range of the IR Sensor**: One of the most crucial issues we have faced was the tight range of the IR sensor, we weren’t able to agree on a cutting threshold between the white and black colors that was robust to other color and heat changes. We have solved this problem by using some resistors connected with the sensor and tuning its value until we reached the best range and threshold. That came with the cost of slower readings, but a few milliseconds longer wasn’t very critical to our application.
 - **Varying Voltage Level**: Simply, we were somehow tuning the optimum velocity profile for our car. But, the velocity was affected by how much the batteries are charged. We managed to overcome this issue by using an AC/DC power adapter during the testing and adding fully charged batteries during the competition.
