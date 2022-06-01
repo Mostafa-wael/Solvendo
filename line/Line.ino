@@ -8,22 +8,12 @@
 #define RIGHT 2
 #define STOP 3
 
-<<<<<<< HEAD
-
-#define MOTOR_L_F 2
-#define MOTOR_L_B 3
-#define MOTOR_R_F 4
-#define MOTOR_R_B 5
-#define MOTOR_L_SPEED 10
-#define MOTOR_R_SPEED 9
-=======
 #define MOTOR_L_F 8
 #define MOTOR_L_B 9
 #define MOTOR_R_F 10
 #define MOTOR_R_B 11
 #define MOTOR_L_SPEED 5
 #define MOTOR_R_SPEED 6
->>>>>>> a5935770c116985d06315cd3bbd943380baa8cfe
 
 
 #define THRESHOLD3 300
