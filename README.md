@@ -1,5 +1,9 @@
-# Maze-Solver
+# Solvendo
+### An intelligent maze solving car 🧠🏎️
 
+Solvendo can solve a complex maze in the shortest amount of time while maintaining a decent velocity profile. It can accomplish this by utilising a combination of closed-loop controllers such as PID and a variety of conditions. It is able to tackle the line following problem using an array of infrared sensors and achieve the same results, That’s why it got its name **Solvendo** which means **solver in latin**.
+
+![solvendo](https://user-images.githubusercontent.com/56788883/171511569-b5908b57-3a31-409e-95c1-dfc5824e10db.png)
 ## Code
 The code was written on the Atmega328P board. All low-level drivers were implemented by us, to achieve the best performance and the least code size.
 
@@ -14,7 +18,7 @@ The code was written on the Atmega328P board. All low-level drivers were impleme
 | Car batteries  | Lithium Rechargeable ones  | 3      | 35 EGP                                                                                                                       | \-                   |
 | Battery Holder | To hold the batteries      | 1      | 15 EGP                                                                                                                       | \-                   |
 
-## Schematic diagrams
+## Schematic diagram
 Our Car consists of 5 IR sensors and 2 DC motors. In this schematic, we show the connections of the sensors, motors, and power connections.
 
 ![Copy of Line Follower](https://user-images.githubusercontent.com/56788883/171509716-32decac7-9016-49d1-b802-5e7c3174b95f.png)
