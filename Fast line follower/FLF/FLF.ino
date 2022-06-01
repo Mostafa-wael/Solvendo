@@ -1,22 +1,22 @@
 
-const int IRSensorL = A1; //IR left sensor
+const int IRSensorL = A0; //IR left sensor
+const int IRSensorS = A1; //IR straight sensor
 const int IRSensorR = A2; //IR right sensor
-const int IRSensorS = A3; //IR straight sensor
 
-const int RightMotorPWM = 3;;
-const int LeftMotorPWM = 9;
-const int RForward = 5;
-const int RightBachward = 4;
-const int LForward = 7;
-const int LeftBachward = 6;
+const int RightMotorPWM = 9;
+const int LeftMotorPWM = 10;
+const int RForward = 4;
+const int RightBachward = 5;
+const int LForward = 2;
+const int LeftBachward = 3;
 byte prev = 0;
 byte curr = 0;
 int idx = 0;
 int mode = 1;
-const int minDif = 5;
-const int thr = 700;
-int turnSpeed = 50;
-int straightSpeed = 200;
+const int minDif = 20;
+const int thr = 500;
+int turnSpeed = 60;
+int straightSpeed = 65;
 
 byte dir[1000];
 short times[1000];
@@ -38,9 +38,7 @@ byte  followLine(){
       return 3;
     }
 }
-void fastFollowLine(){
 
-}
 void set_Motorspeed(int valR , int valL ){ 
   analogWrite(LeftMotorPWM, valL);
   analogWrite(RightMotorPWM, valR);
@@ -55,18 +53,18 @@ void go_Advance(){
 }
 
 void go_Right(){ 
-    digitalWrite(RForward, HIGH);
-    digitalWrite(LForward,LOW);
-    digitalWrite(RightBachward, LOW);
-    digitalWrite(LeftBachward, HIGH);
+    digitalWrite(LForward, HIGH);
+    digitalWrite(RForward,LOW);
+    digitalWrite(LeftBachward, LOW);
+    digitalWrite(RightBachward, HIGH);
     set_Motorspeed(turnSpeed , turnSpeed);
 }
 
 void go_Left(){ 
-    digitalWrite(RForward, LOW);
-    digitalWrite(LForward,HIGH);
-    digitalWrite(RightBachward, HIGH);
-    digitalWrite(LeftBachward, LOW);
+    digitalWrite(LForward, LOW);
+    digitalWrite(RForward,HIGH);
+    digitalWrite(LeftBachward, HIGH);
+    digitalWrite(RightBachward, LOW);
     set_Motorspeed(turnSpeed , turnSpeed);
 }
   
@@ -105,7 +103,7 @@ void loop() {
       prev = curr;
     }
     else {
-      fastFollowLine();
+//      fastFollowLine();
     }
     delay(500);
 }

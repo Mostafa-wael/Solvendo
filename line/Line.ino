@@ -1,3 +1,4 @@
+#define SMAPLE 100
 #define IR_L A0
 #define IR_C A1
 #define IR_R A2
@@ -8,12 +9,12 @@
 #define STOP 3
 
 
-#define MOTOR_L_F 8
-#define MOTOR_L_B 9
-#define MOTOR_R_F 10
-#define MOTOR_R_B 11
-#define MOTOR_L_SPEED 5
-#define MOTOR_R_SPEED 6
+#define MOTOR_L_F 2
+#define MOTOR_L_B 3
+#define MOTOR_R_F 4
+#define MOTOR_R_B 5
+#define MOTOR_L_SPEED 10
+#define MOTOR_R_SPEED 9
 
 
 #define THRESHOLD3 300
@@ -22,7 +23,6 @@
 #define SPEED 70
 
 
-byte directions [1000];
 
 
 
@@ -74,9 +74,8 @@ void setup() {
   digitalWrite(MOTOR_R_B, LOW);
   digitalWrite(MOTOR_L_B, LOW);
 }
-  #define SMAPLE 100
 void loop() {
-//  printRealValues();
+ printRealValues();
   int right = 0;  int center=0; int left =0 ;
   for(int i = 0; i< SMAPLE; i++){
        if(blackLine(IR_C))
