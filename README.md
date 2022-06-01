@@ -8,15 +8,15 @@ Solvendo can solve a complex maze in the shortest amount of time while maintaini
 The code was written on the Atmega328P board. All low-level drivers were implemented by us, to achieve the best performance and the least code size.
 
 ## Components & cost
-| Name           | Use & description          | Number | market Cost per Part                                                                                                         | Notes                |
-| -------------- | -------------------------- | ------ | ---------------------------------------------------------------------------------------------------------------------------- | -------------------- |
-| Arduino Uno    | The main development board | 1      | [160 EGP](https://free-electronic.com/product/arduino-uno-r3-ch340-usb-cable/)                                               | We already had it    |
-| TCRT 5000      | The IR sensor              | 5      | [10 EGP](https://store.fut-electronics.com/products/tcrt5000-reflective-ir-sensor?_pos=1&_sid=65bee30f3&_ss=r)               | \-                   |
-| Gearbox Motors | The used motors            | 2      | [25 EGP](https://store.fut-electronics.com/products/dc-geared-motors-for-robots-straight-shaft?_pos=33&_sid=eb26e25ca&_ss=r) | We already had them  |
-| Motor Driver   | The L298N H-bridge         | 1      | [70 EGP](https://store.fut-electronics.com/products/l298-dual-motor-driver-module-2a?_pos=16&_sid=eb26e25ca&_ss=r)           | We already had it    |
-| Car chassis    | Car’s Main body            | 1      | 190 EGP                                                                                                                      | We had 3d-printed it |
-| Car batteries  | Lithium Rechargeable ones  | 3      | 35 EGP                                                                                                                       | \-                   |
-| Battery Holder | To hold the batteries      | 1      | 15 EGP                                                                                                                       | \-                   |
+| Name           | Use & description          | Number | Market Cost per Part                                                                                                         |
+| -------------- | -------------------------- | ------ | ---------------------------------------------------------------------------------------------------------------------------- |
+| Arduino Uno    | The main development board | 1      | [160 EGP](https://free-electronic.com/product/arduino-uno-r3-ch340-usb-cable/)                                               |
+| TCRT 5000      | The IR sensor              | 5      | [10 EGP](https://store.fut-electronics.com/products/tcrt5000-reflective-ir-sensor?_pos=1&_sid=65bee30f3&_ss=r)               |
+| Gearbox Motors | The used motors            | 2      | [25 EGP](https://store.fut-electronics.com/products/dc-geared-motors-for-robots-straight-shaft?_pos=33&_sid=eb26e25ca&_ss=r) |
+| Motor Driver   | The L298N H-bridge         | 1      | [70 EGP](https://store.fut-electronics.com/products/l298-dual-motor-driver-module-2a?_pos=16&_sid=eb26e25ca&_ss=r)           |
+| Car chassis    | Car’s Main body            | 1      | 190 EGP                                                                                                                      |
+| Car batteries  | Lithium Rechargeable ones  | 3      | 35 EGP                                                                                                                       |
+| Battery Holder | To hold the batteries      | 1      | 15 EGP                                                                                                                       |
 
 ## Schematic diagram
 Our Car consists of 5 IR sensors and 2 DC motors. In this schematic, we show the connections of the sensors, motors, and power connections.
