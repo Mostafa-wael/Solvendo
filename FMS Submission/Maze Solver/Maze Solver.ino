@@ -70,27 +70,27 @@ void moveMotor2(int speedR , int speedL, int rDir, int lDir)
   //rDir *= -1;
   lDir *= -1;
   if(millis()%200 > 120){
-    avr_analogWrite(MOTOR_R_SPEED, 0);
-    avr_analogWrite(MOTOR_L_SPEED, 0);
+    abbas_analogWrite(MOTOR_R_SPEED, 0);
+    abbas_analogWrite(MOTOR_L_SPEED, 0);
     return;
   }
-  avr_analogWrite(MOTOR_R_SPEED, speedR);
-  avr_analogWrite(MOTOR_L_SPEED, speedL);
+  abbas_analogWrite(MOTOR_R_SPEED, speedR);
+  abbas_analogWrite(MOTOR_L_SPEED, speedL);
   if(rDir == 1){
-    avr_digitalWrite(MOTOR_R_F,HIGH);
-    avr_digitalWrite(MOTOR_R_B,LOW);
+    abbas_digitalWrite(MOTOR_R_F,HIGH);
+    abbas_digitalWrite(MOTOR_R_B,LOW);
   }
   else{
-    avr_digitalWrite(MOTOR_R_F,LOW);
-    avr_digitalWrite(MOTOR_R_B,HIGH);
+    abbas_digitalWrite(MOTOR_R_F,LOW);
+    abbas_digitalWrite(MOTOR_R_B,HIGH);
   }
   if(lDir == 1){
-    avr_digitalWrite(MOTOR_L_F,HIGH);
-    avr_digitalWrite(MOTOR_L_B,LOW);
+    abbas_digitalWrite(MOTOR_L_F,HIGH);
+    abbas_digitalWrite(MOTOR_L_B,LOW);
   }
   else{
-    avr_digitalWrite(MOTOR_L_F,LOW);
-    avr_digitalWrite(MOTOR_L_B,HIGH);
+    abbas_digitalWrite(MOTOR_L_F,LOW);
+    abbas_digitalWrite(MOTOR_L_B,HIGH);
   }
 }
 
@@ -101,18 +101,18 @@ void moveMotor2(int speedR , int speedL, int rDir, int lDir)
 void setup() {
   // set motor pins as output
   Serial.begin(9600);
-  avr_pinMode(MOTOR_R_F, OUTPUT);
-  avr_pinMode(MOTOR_R_B, OUTPUT);
-  avr_pinMode(MOTOR_L_F, OUTPUT);
-  avr_pinMode(MOTOR_L_B, OUTPUT);
+  abbas_pinMode(MOTOR_R_F, OUTPUT);
+  abbas_pinMode(MOTOR_R_B, OUTPUT);
+  abbas_pinMode(MOTOR_L_F, OUTPUT);
+  abbas_pinMode(MOTOR_L_B, OUTPUT);
 
   // set switch pin as input
-  avr_pinMode(SWITCH, INPUT);
+  abbas_pinMode(SWITCH, INPUT);
   // set motor direction
-  avr_digitalWrite(MOTOR_R_F, HIGH);
-  avr_digitalWrite(MOTOR_L_F, HIGH);
-  avr_digitalWrite(MOTOR_R_B, LOW);
-  avr_digitalWrite(MOTOR_L_B, LOW);
+  abbas_digitalWrite(MOTOR_R_F, HIGH);
+  abbas_digitalWrite(MOTOR_L_F, HIGH);
+  abbas_digitalWrite(MOTOR_R_B, LOW);
+  abbas_digitalWrite(MOTOR_L_B, LOW);
 }
 
 void loop() {
@@ -139,9 +139,9 @@ unsigned long lastRight = 0;
 
 int onLine(){
   return (
-    avr_analogRead(IR_R) > THRESHOLD_W
-    && avr_analogRead(IR_C)< THRESHOLD_W
-    && avr_analogRead(IR_L) > THRESHOLD_W
+    abbas_analogRead(IR_R) > THRESHOLD_W
+    && abbas_analogRead(IR_C)< THRESHOLD_W
+    && abbas_analogRead(IR_L) > THRESHOLD_W
     );
 //    return (
 //      analogRead(IR_R) < THRESHOLD_W
@@ -175,11 +175,11 @@ void rotate180(){
   }
 }
 void movecar2(){
-  float LL_Reading = avr_analogRead(IR_LL);
-  float RR_Reading = avr_analogRead(IR_RR);
-  float C_Reading = avr_analogRead(IR_C);
-  float L_Reading = avr_analogRead(IR_L);
-  float R_Reading = avr_analogRead(IR_R);
+  float LL_Reading = abbas_analogRead(IR_LL);
+  float RR_Reading = abbas_analogRead(IR_RR);
+  float C_Reading = abbas_analogRead(IR_C);
+  float L_Reading = abbas_analogRead(IR_L);
+  float R_Reading = abbas_analogRead(IR_R);
 
   int C = C_Reading > THRESHOLD_W;
   int L = L_Reading > THRESHOLD_W;
@@ -237,9 +237,9 @@ float differential_steering(float left_align,float c,float right_align)
 
 void movecar(){
  // read the sensors
- float C = avr_analogRead(IR_C);
- float L = avr_analogRead(IR_L);
- float R = avr_analogRead(IR_R);
+ float C = abbas_analogRead(IR_C);
+ float L = abbas_analogRead(IR_L);
+ float R = abbas_analogRead(IR_R);
 
  // calc the steering angle usign the PID controller
  float PIDError = differential_steering(L, C, R);
