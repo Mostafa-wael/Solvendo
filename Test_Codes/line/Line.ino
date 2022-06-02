@@ -1,3 +1,4 @@
+#define SMAPLE 100
 #define IR_L A0
 #define IR_C A1
 #define IR_R A2

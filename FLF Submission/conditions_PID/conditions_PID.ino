@@ -1,3 +1,4 @@
+# include "drivers.h"
 /*!
  * @brief Directions
  */
@@ -49,7 +50,7 @@ long prevT = 0;
 float eIntegral = 0;
 
 /*!
- * @brief Gllobal variables to handle the direction errors
+ * @brief Global variables to handle the direction errors
  */
 int lastDir = 0;
 int error = 0;
@@ -63,25 +64,8 @@ boolean dir = false;
  */
 void moveMotor(int speedR , int speedL)
 {
-  analogWrite(MOTOR_R_SPEED, speedR);
-  analogWrite(MOTOR_L_SPEED, speedL);
-}
-/*!
- * @brief print the real analog values of the IR sensors and the difference between the left and the right sensors
- * @return void
- */
- void printValues()
-{
-  Serial.print("Abs Values ");
-  Serial.print(analogRead(IR_L));
-  Serial.print(" ");
-  Serial.print(analogRead(IR_C));
-  Serial.print(" ");
-  Serial.print(analogRead(IR_R));
-  Serial.print(" ");
-  Serial.print((analogRead(IR_L) - analogRead(IR_R)));
-  Serial.print(" ");
-  Serial.println((analogRead(IR_R) - analogRead(IR_L)));
+  avr_analogWrite(MOTOR_R_SPEED, speedR);
+  avr_analogWrite(MOTOR_L_SPEED, speedL);
 }
 
 /*!
@@ -114,18 +98,18 @@ float differential_steering(float left_align,float c,float right_align)
 void setup() {
   // set motor pins as output
 //  Serial.begin(9600);
-  pinMode(MOTOR_R_F, OUTPUT);
-  pinMode(MOTOR_R_B, OUTPUT);
-  pinMode(MOTOR_L_F, OUTPUT);
-  pinMode(MOTOR_L_B, OUTPUT);
+  avr_pinMode(MOTOR_R_F, OUTPUT);
+  avr_pinMode(MOTOR_R_B, OUTPUT);
+  avr_pinMode(MOTOR_L_F, OUTPUT);
+  avr_pinMode(MOTOR_L_B, OUTPUT);
 
   // set switch pin as input
   pinMode(SWITCH, INPUT);
   // set motor direction
-  digitalWrite(MOTOR_R_F, HIGH);
-  digitalWrite(MOTOR_L_F, HIGH);
-  digitalWrite(MOTOR_R_B, LOW);
-  digitalWrite(MOTOR_L_B, LOW);
+  avr_digitalWrite(MOTOR_R_F, HIGH);
+  avr_digitalWrite(MOTOR_L_F, HIGH);
+  avr_digitalWrite(MOTOR_R_B, LOW);
+  avr_digitalWrite(MOTOR_L_B, LOW);
 }
 
 void loop() {
@@ -140,15 +124,15 @@ void loop() {
  */
 void movecar(){
  // read the sensors
- float C = analogRead(IR_C);
- float L = analogRead(IR_L);
- float R = analogRead(IR_R);
+ float C = avr_analogRead(IR_C);
+ float L = avr_analogRead(IR_L);
+ float R = avr_analogRead(IR_R);
 
  // calc the steering angle usign the PID controller
  float PIDError = differential_steering(L, C, R);
 
  // check the switch pin to switch between code : 1- if conditions  2- pid with if conditions 
- if(digitalRead(SWITCH) == HIGH)
+ if(avr_digitalRead(SWITCH) == HIGH)
  {
   PIDError = 0.0;
  }
