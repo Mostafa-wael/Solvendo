@@ -25,13 +25,13 @@
 /*!
  * @brief Thresholds
  */
-#define THRESHOLD_W 400 // above it is white and below it all black
+#define THRESHOLD_W 700 // above it is white and below it all black
 #define THRESHOLD_B 150 // above it is white and below it all black
-#define ThresholdDiff 400
+#define ThresholdDiff 200
 #define ThresholdDiff_W 150
 #define SPEEDSTEERING 70 // steering speed
 #define NUM_OF_ERROR 70  // thershold for accepted errors
-#define SPEEDFORWARD 140 // forward speed
+#define SPEEDFORWARD 70 // forward speed
 
 /*!
  * @brief PID Constants
