@@ -1,4 +1,3 @@
-# include "drivers.h"
 /*!
  * @brief Directions
  */
@@ -69,31 +68,64 @@ void moveMotor2(int speedR , int speedL, int rDir, int lDir)
 {
   //rDir *= -1;
   lDir *= -1;
-  if(millis()%200 > 150){
-    avr_analogWrite(MOTOR_R_SPEED, 0);
-    avr_analogWrite(MOTOR_L_SPEED, 0);
+  if(millis()%200 > 120){
+    analogWrite(MOTOR_R_SPEED, 0);
+    analogWrite(MOTOR_L_SPEED, 0);
     return;
   }
-  avr_analogWrite(MOTOR_R_SPEED, speedR);
-  avr_analogWrite(MOTOR_L_SPEED, speedL);
+  analogWrite(MOTOR_R_SPEED, speedR);
+  analogWrite(MOTOR_L_SPEED, speedL);
   if(rDir == 1){
-    avr_digitalWrite(MOTOR_R_F,HIGH);
-    avr_digitalWrite(MOTOR_R_B,LOW);
+    digitalWrite(MOTOR_R_F,HIGH);
+    digitalWrite(MOTOR_R_B,LOW);
   }
   else{
-    avr_digitalWrite(MOTOR_R_F,LOW);
-    avr_digitalWrite(MOTOR_R_B,HIGH);
+    digitalWrite(MOTOR_R_F,LOW);
+    digitalWrite(MOTOR_R_B,HIGH);
   }
   if(lDir == 1){
-    avr_digitalWrite(MOTOR_L_F,HIGH);
-    avr_digitalWrite(MOTOR_L_B,LOW);
+    digitalWrite(MOTOR_L_F,HIGH);
+    digitalWrite(MOTOR_L_B,LOW);
   }
   else{
-    avr_digitalWrite(MOTOR_L_F,LOW);
-    avr_digitalWrite(MOTOR_L_B,HIGH);
+    digitalWrite(MOTOR_L_F,LOW);
+    digitalWrite(MOTOR_L_B,HIGH);
   }
 }
 
+
+/*!
+ * @brief print the real analog values of the IR sensors and the difference between the left and the right sensors
+ * @return void
+ */
+ void printValues()
+{
+  Serial.print("Abs Values ");
+  Serial.print(analogRead(IR_LL));
+  Serial.print(" ");
+  Serial.print(analogRead(IR_L));
+  Serial.print(" ");
+  Serial.print(analogRead(IR_C));
+  Serial.print(" ");
+  Serial.print(analogRead(IR_R));
+  Serial.print(" ");
+  Serial.println(analogRead(IR_RR));
+}
+
+
+ void printValues2()
+{
+  Serial.print("Abs Values ");
+  Serial.print(analogRead(IR_LL) > THRESHOLD_W );
+  Serial.print(" ");
+  Serial.print(analogRead(IR_L) > THRESHOLD_W);
+  Serial.print(" ");
+  Serial.print(analogRead(IR_C) > THRESHOLD_W);
+  Serial.print(" ");
+  Serial.print(analogRead(IR_R) > THRESHOLD_W);
+  Serial.print(" ");
+  Serial.println(analogRead(IR_RR) > THRESHOLD_W);
+}
 
 
 /*!
@@ -103,23 +135,25 @@ void moveMotor2(int speedR , int speedL, int rDir, int lDir)
 void setup() {
   // set motor pins as output
   Serial.begin(9600);
-  avr_pinMode(MOTOR_R_F, OUTPUT);
-  avr_pinMode(MOTOR_R_B, OUTPUT);
-  avr_pinMode(MOTOR_L_F, OUTPUT);
-  avr_pinMode(MOTOR_L_B, OUTPUT);
+  pinMode(MOTOR_R_F, OUTPUT);
+  pinMode(MOTOR_R_B, OUTPUT);
+  pinMode(MOTOR_L_F, OUTPUT);
+  pinMode(MOTOR_L_B, OUTPUT);
 
   // set switch pin as input
-  avr_pinMode(SWITCH, INPUT);
+  pinMode(SWITCH, INPUT);
   // set motor direction
-  avr_digitalWrite(MOTOR_R_F, HIGH);
-  avr_digitalWrite(MOTOR_L_F, HIGH);
-  avr_digitalWrite(MOTOR_R_B, LOW);
-  avr_digitalWrite(MOTOR_L_B, LOW);
+  digitalWrite(MOTOR_R_F, HIGH);
+  digitalWrite(MOTOR_L_F, HIGH);
+  digitalWrite(MOTOR_R_B, LOW);
+  digitalWrite(MOTOR_L_B, LOW);
+  Serial.println("-------");
+  Serial.println("-------");
 }
 
 void loop() {
   /////////////////////////////////////////////////////
- //printValues2();
+ printValues2();
   movecar2();
  //moveMotor(SPEEDFORWARD, SPEEDFORWARD);
  //moveMotor2(SPEEDFORWARD,SPEEDFORWARD,1,-1);
@@ -142,32 +176,41 @@ unsigned long lastRight = 0;
 
 int onLine(){
   return (
-    avr_analogRead(IR_R) > THRESHOLD_W
-    && avr_analogRead(IR_C)< THRESHOLD_W
-    && avr_analogRead(IR_L) > THRESHOLD_W
+    analogRead(IR_R) > THRESHOLD_W
+    && analogRead(IR_C)< THRESHOLD_W
+    && analogRead(IR_L) > THRESHOLD_W
     );
+//    return (
+//      analogRead(IR_R) < THRESHOLD_W
+//      || analogRead(IR_C)< THRESHOLD_W
+//      || analogRead(IR_L) < THRESHOLD_W
+//      );
 }
 int kam2 = 10000;
 void rotateRight(){
+  Serial.println("Rotate Right");
   int mincnt = kam2;
-  while(avr_analogRead(IR_RR) < THRESHOLD_W ||mincnt > 0 || !onLine()){
+  while(mincnt > 0 || !onLine()){
     moveMotor2(SPEEDFORWARD,SPEEDFORWARD,-1,1);
     mincnt--;
   }
 }
 void rotateLeft(){
+  Serial.println("Rotate Left");
   moveMotor2(0,0,1,1);
-  //delay(2000);
-  moveMotor2(SPEEDFORWARD,SPEEDFORWARD,1,1);
+  delay(1000);
+  moveMotor2(SPEEDFORWARD,SPEEDFORWARD,-1,-1);
+  delay(200);
   moveMotor2(0,0,1,1);
-  //delay(2000);
+  delay(1000);
     int mincnt = kam2;
   while(mincnt > 0 || !onLine()){
-    moveMotor2(SPEEDFORWARD,SPEEDFORWARD,1,-1);
+    moveMotor2(SPEEDFORWARD,0,1,-1);
     mincnt--;
   }
 }
 void rotate180(){
+  Serial.println("Rotate 180");
    int mincnt = kam2;
   while(mincnt > 0 || !onLine()){
     moveMotor2(SPEEDFORWARD,SPEEDFORWARD,1,-1);
@@ -175,11 +218,11 @@ void rotate180(){
   }
 }
 void movecar2(){
-  float LL_Reading = avr_analogRead(IR_LL);
-  float RR_Reading = avr_analogRead(IR_RR);
-  float C_Reading = avr_analogRead(IR_C);
-  float L_Reading = avr_analogRead(IR_L);
-  float R_Reading = avr_analogRead(IR_R);
+  float LL_Reading = analogRead(IR_LL);
+  float RR_Reading = analogRead(IR_RR);
+  float C_Reading = analogRead(IR_C);
+  float L_Reading = analogRead(IR_L);
+  float R_Reading = analogRead(IR_R);
 
   int C = C_Reading > THRESHOLD_W;
   int L = L_Reading > THRESHOLD_W;
@@ -205,7 +248,17 @@ void movecar2(){
   int kam = 3;
   if(llIsBlack >= kam){
     rotateLeft();
-  } 
+  }
+  else if(cIsWhite >=kam && rIsWhite >=kam  && lIsWhite >=kam ){
+    if(millis()-lastRight < 1000)
+      rotateRight();
+    else
+      rotate180();
+  }
+  
+  if(rrIsBlack >= kam)
+    lastRight = millis();
+    
   movecar();
 }
 
@@ -227,9 +280,9 @@ float differential_steering(float left_align,float c,float right_align)
 
 void movecar(){
  // read the sensors
- float C = avr_analogRead(IR_C);
- float L = avr_analogRead(IR_L);
- float R = avr_analogRead(IR_R);
+ float C = analogRead(IR_C);
+ float L = analogRead(IR_L);
+ float R = analogRead(IR_R);
 
  // calc the steering angle usign the PID controller
  float PIDError = differential_steering(L, C, R);
@@ -283,4 +336,6 @@ void movecar(){
   void moveMotor(int speedR , int speedL)
 {
   moveMotor2(speedR, speedL, 1, 1);
+//  analogWrite(MOTOR_R_SPEED, speedR);
+//  analogWrite(MOTOR_L_SPEED, speedL);
 }
